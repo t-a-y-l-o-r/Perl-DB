@@ -13,3 +13,5 @@ SimpleDB.pl is a basic example of a SDBM type data base in perl5.
 
 
 There is nothing special about this database and it should not be considered secure for any reason. 
+
+This sentence is for test purposes only
