@@ -27,7 +27,6 @@ my $database_file = "Simple.dbm";
 # make database
 tie %database, 'SDBM_File', $database_file, O_CREAT|O_RDWR, 0644;
 
-
 # let the user know if the file was created/opened or not
 if (tied %database){
   print "File $database_file now open.\n";
@@ -75,7 +74,11 @@ EOF
 sub readDB{
   my $keyname = getkey();
   if (exists $database{$keyname}){
-    print "Element '$keyname' has value: $database{$keyname}\n";
+    # meaning the stored value is a person object
+    if ($database{$keyname} =~ m/\|\|+/){formate($keyname)}
+    else{
+      print "Element '$keyname' has value: $database{$keyname}\n";
+    }
   }
   else{
     print "Sorry, this element doesn't exist.\n";
@@ -85,7 +88,13 @@ sub readDB{
 
 sub listDB{
   foreach (sort keys %database){
-    print "$_ => $database{$_}\n";
+    if ($database{$_} =~ m/\|\|+/g){
+      print "$_:\n";
+      formate($_);
+    }
+    else{
+      print "$_ => $database{$_}\n";
+    }
   }
 }
 
@@ -93,7 +102,6 @@ sub listDB{
 sub writeDB{
   my $keyname = getkey();
   my $keyvalue = getvalue();
-
   if (exists $database{$keyvalue}){
     print "Sorry, this element already exists.\n";
   }
@@ -125,18 +133,20 @@ sub clearDB{
 
 
 # ~~~INPUT~~~
-
+# my $test;
 sub getkey{
   print "Enter a key name of the element: \n";
   chomp ($_ = <STDIN>);
-  $_;
+  $_ =~ s/^\s+|\s+$//g;  # will remove trailing and leading white space
+  return $_;
 }
 
 
 sub getvalue{
   print "Enter a value name of the element: \n";
   chomp ($_ = <STDIN>);
-  $_;
+  $_ =~ s/^\s+|\s+$//g;
+  return $_;
 }
 
 
@@ -145,5 +155,19 @@ sub besure{
   $_ = <STDIN>;
   /^y/i;
 }
+
+
+#~~~OUTOUT~~~
+sub formate{
+  $_ = $database{$_};
+  @_= split /\|\|/, $_;
+  foreach (sort @_){
+    $_ =~ s/^\s+|\s+$//g;
+    print "\t$_\n";
+  }
+}
+
+
+
 
 
