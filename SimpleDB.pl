@@ -17,6 +17,7 @@ This simple script shows an example of database management
 6) w will add an element
 7) d will delete an element
 8) x will DESTROY EVERYTHING PREPARE TO CRY
+9) q will quit
 =cut 
 
 
