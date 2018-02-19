@@ -15,7 +15,8 @@ Accepts the following attributes:
   address
   occupation
 
-Contains a class attribute: @Population, which tracks the number of Person objects that have been constructed, and stores them in an array
+Contains a class attribute: @Population, which tracks the number of Person 
+objects that have been constructed, and stores them in an array 
 
 ~~~Constructor~~~
 new() -> constructor that accepts a hash
@@ -41,7 +42,8 @@ my @Population; # number of Person objects created
 # ~~~CONSTRUCTOR~~~~~~~~~
 # ~~~~~~~~~~~~~~~~~~~~~~~
 =head1 new()
-A constructor method that calls to a hiden method to add the current construct to the Population array, instead of to the variable itself.
+A constructor method that calls to a hiden method to add the current construct 
+to the Population array, instead of to the variable itself.
 =cut
 sub new{
   my $class = shift;
@@ -56,7 +58,8 @@ sub new{
 # ~~~Under the Hood~~~~~~
 # ~~~~~~~~~~~~~~~~~~~~~~~
 =for
-This method pushes the current object to the everyone array, adding it to the list of tracked objects.
+This method pushes the current object to the everyone array, adding it to the 
+list of tracked objects. 
 =cut
 sub _init{
   my $self = shift;
@@ -69,7 +72,8 @@ sub _init{
 # ~~~Accessors/Mutators~~
 # ~~~~~~~~~~~~~~~~~~~~~~~
 =head2 surname()
-A simple accessor that duels as a mutator method if an argument is passed. Changes and returns the stored surname
+A simple accessor that duels as a mutator method if an argument is passed. 
+Changes and returns the stored surname
 =cut
 sub surname{
   my $self = shift;
@@ -82,7 +86,8 @@ sub surname{
 }
 
 =head3 forename()
-A simple accessor that duels as a mutator method if an argument is passed. Changes and returns the stored forename
+A simple accessor that duels as a mutator method if an argument is passed. 
+Changes and returns the stored forename
 =cut
 sub forename{
   my $self = shift;
@@ -95,7 +100,8 @@ sub forename{
 }
 
 =head4 address()
-A simple accessor that duels as a mutator method if an argument is passed. Changes and returns the stored address
+A simple accessor that duels as a mutator method if an argument is passed. 
+Changes and returns the stored address
 =cut
 sub address{
   my $self = shift;
@@ -108,7 +114,8 @@ sub address{
 }
 
 =head5 occupation()
-A simple accessor that duels as a mutator method if an argument is passed. Changes and returns the stored occupation
+A simple accessor that duels as a mutator method if an argument is passed.
+ Changes and returns the stored occupation
 =cut
 sub occupation{
   my $self = shift;
@@ -121,7 +128,8 @@ sub occupation{
 }
 
 =head6 population()
-Returns the population array. The array is a list of all known Person objects that have been recently created.
+Returns the population array. The array is a list of all known Person objects 
+that have been recently created.
 =cut
 sub population{@Population}
 
@@ -134,7 +142,9 @@ sub headcount{scalar @Population}
 # ~~~~~~~Utility~~~~~~~~~
 # ~~~~~~~~~~~~~~~~~~~~~~~
 =head7 equals()
-Determines whether or not the passed object is identical to the calling object. Checks type first, then checks each attribute. Returns 1 for true, and undefined for false
+Determines whether or not the passed object is identical to the calling object. 
+Checks type first, then checks each attribute. Returns 1 for true, and undefined 
+for false
 =cut
 sub equals{
   my $self = shift;
@@ -189,7 +199,8 @@ sub printletter{
   my @date = (localtime) [3, 4, 5]; # grabs the day/month/year as an array
   $date[1]++; # be defualt the month starts at 0
   $date[2] += 1900; # years count from 1900, add to find current year
-  my $date = join "/", @date; # joins the array into a string with / between each array part
+  my $date = join "/", @date; 
+  # joins the array into a string with / between each array part
   print <<EOF;
   $name
   $address

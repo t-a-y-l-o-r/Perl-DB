@@ -1,7 +1,7 @@
 # Perl-DB
 SimpleDB.pl is a basic example of a SDBM type data base in perl5.
 
-
+    ~~~Options~~~
   o will list all options  
   r will read the value after accepting a key  
   l will list all elements  
@@ -12,6 +12,22 @@ SimpleDB.pl is a basic example of a SDBM type data base in perl5.
 
 
 
-There is nothing special about this database and it should not be considered secure for any reason. 
+There is nothing special about this database 
+and it should not be considered secure for any reason. 
 
-This sentence is for test purposes only
+
+
+Person.pm is a basic package for a person class. 
+ 
+      ~~Access/Mutation~~~ 
+  surname() -> accessor/mutator 
+  forename() -> accessor/mutator 
+  address() -> accessor/mutator 
+  occupation() -> accessor/mutator 
+  headcount() -> returns the population count 
+  population() -> returns an array of the created Person objects 
+
+      ~~~Util~~~ 
+  equals() -> checks if two objs are the same 
+  fullname() -> returns the full name of the person 
+  printleter() -> prints a properly formatted leter 
