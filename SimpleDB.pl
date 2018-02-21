@@ -28,8 +28,6 @@ This simple script shows an example of database management
 # #############################
 # ############ MAIN ###########
 # #############################
-
-
 =head1
 Creates the data base && works as a driver for the remander of the script
 =cut
@@ -89,8 +87,6 @@ EOF
 # #############################
 # ############ INPUT ##########
 # #############################
-
-
 =head1
 Gets the key name entry from the user
 =cut
@@ -147,8 +143,6 @@ sub writeDB{
 # #############################
 # ######### OUTPUT ############
 # #############################
-
-
 =head1
 Formates a person object entry before outputting it
 =cut
@@ -192,8 +186,6 @@ sub listDB{
 # #############################
 # ######### CLEANUP ###########
 # #############################
-
-
 =head1
 Deletes the entry the user enters
 =cut
@@ -221,8 +213,6 @@ sub clearDB{
 # #############################
 # ####### FILEHANDLING ########
 # #############################
-
-
 =head1
 Writes the entire data base to a file. Each value is stored and sperated by 
 commas. The key name should always be taken as the forename+surname.
