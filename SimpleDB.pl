@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use POSIX;
 use SDBM_File;
+use Carp;
+use Switch;
 
 
 =head1 SimpleDB.pl - A simple database script
@@ -45,14 +47,14 @@ until (/^q/i){ # checks to see if q/Q is at the begining, allowing the user to q
   # chomp removes trailing newlines from the input
   chomp ($_ = <STDIN>);
   # run subroutine associated with the passed option
-  if ($_ eq "o") {optionsDB()}
-  elsif ($_ eq "r") {readDB()}
-  elsif ($_ eq "fr") {fileReadDB()}
-  elsif ($_ eq "fw") {fileWriteDB()}
-  elsif ($_ eq "l") {print listDB();}
-  elsif ($_ eq "w") {writeDB()}
-  elsif ($_ eq "d") {deleteDB()}
-  elsif ($_ eq "x") {clearDB()}
+  if ($_ =~ /^o/i) {optionsDB()}
+  elsif ($_ =~ /^r/i) {readDB()}
+  elsif ($_ =~ /^(fr)/i) {fileReadDB()}
+  elsif ($_ =~ /^(fw)/i) {fileWriteDB()}
+  elsif ($_ =~ /^l/i) {print listDB();}
+  elsif ($_ =~ /^w/i) {writeDB()}
+  elsif ($_ =~ /^d/i) {deleteDB()}
+  elsif ($_ =~ /^x/i) {clearDB()}
   elsif ($_ =~ /^q/i) {print "Bye bye!\n";}
   else{ print "Sorry, not a recognized option.\n";}
 }
@@ -85,13 +87,7 @@ Reads the specific entry entered by the user, if it exists.
 sub readDB{
   my $keyname = getkey();
   if (exists $database{$keyname}){
-    # meaning the stored value is a person object
-    if ($database{$keyname} =~ m/(\|\|)+/){
-      print formate($keyname);
-    }
-    else{
-      print "Element '$keyname' has value: $database{$keyname}\n";
-    }
+    print $database{$keyname}, "\n";
   }
   else{
     print "Sorry, this element doesn't exist.\n";
@@ -104,13 +100,8 @@ Lists all currently stored entries
 sub listDB{
   my $total = "";
   foreach (sort keys %database){
-    if ($database{$_} =~ m/\|\|+/g){
-      $total .= "$_:\n";
-      $total .= formate($_);
-    }
-    else{
-      $total .= "$_ => $database{$_}\n";
-    }
+    $total .= "$_:\n";
+    $total .= "$database{$_}\n";
   }
   return $total;
 }
@@ -159,7 +150,7 @@ sub clearDB{
 Gets the key name entry from the user
 =cut
 sub getkey{
-  print "Enter a key name of the element: \n";
+  print "Enter a key name of the element (case-sensitive): \n";
   chomp ($_ = <STDIN>);
   $_ =~ s/^\s+|\s+$//g;  # will remove trailing and leading white space
   return $_;
@@ -182,6 +173,15 @@ sub besure{
   print "Are you sure? (y\\n)\n";
   $_ = <STDIN>;
   /^y/i;
+}
+
+=head1
+Reads in a file name
+=cut
+sub getFile{
+  print "File to read from: \n";
+  chomp (my $filename = <STDIN>);
+  return $filename;
 }
 
 
@@ -210,13 +210,82 @@ sub fileWriteDB{
   open (FILE, ">", $filename);
   my $total = "";
   foreach (sort keys %database){
-    $total .= $database{$_} . ",";
+    $total .= $_ . ":\n". $database{$_} . ",\n";
   }
   print FILE $total;
   close FILE;
   print "Done writing to file $filename!\n";
 }
 
-=head1
 
+=head1
+Reads data from a csv file. Assumes the data is formatted like so:
+Key:
+  forename > Genji
+  surname > Shimada
+  address > 456 Healing Rd.
+  occupation > Wasting Q's
+,
+
+The comma at the end is required 
 =cut
+sub fileReadDB{
+  my $entries = 0;
+  my $filename = getFile;
+  my $key;
+  my $value = "";
+  open(FILE, "<", $filename) or croak "Unable to open $filename.\n";
+  while (my $line = <FILE>){
+    $_ = $line;
+    switch ($_){
+      case m/(\w+)(\s)?(:)/ {
+        # chomp $_;
+        $_ =~ s/(^\s+)|(\s+$)(\n)?|(:)(\n)?//g; 
+        $key = $_;
+      } 
+      # key name is followed by a ':'
+      case m/(\t)?(\s)?(surname > )/ {
+        $_ =~ s/(^\s+)|(\s+$)//g; 
+        $value .= "\t" . $_ . "\n";
+      }
+      case m/(\t)?(\s)?(forename > )/ {
+        $_ =~ s/(^\s+)|(\s+$)//g; 
+        $value .= "\t" . $_ . "\n";
+      }
+      case m/(\t)?(\s)?(address > )/ {
+        $_ =~ s/(^\s+)|(\s+$)//g; 
+        $value .= "\t" . $_ . "\n";
+      }
+      case m/(\t)?(\s)?(occupation > )/ {
+        $_ =~ s/(^\s+)|(\s+$)//g; 
+        $value .= "\t" . $_ . "\n";
+        $database{$key} = $value;
+      }
+      case m/(\t)?(\s)?(,)/ {
+        $key = ""; 
+        $value = ""; 
+        $entries++; 
+        next
+      } 
+      # clears everything
+      else {croak "$_\nSomething went horribly wrong in the Switch-case.\n"}
+    }
+  }
+  print "Entries added: $entries\n";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
