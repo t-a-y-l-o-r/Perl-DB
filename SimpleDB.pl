@@ -25,12 +25,17 @@ This simple script shows an example of database management
 =cut 
 
 
+# #############################
+# ############ MAIN ###########
+# #############################
+
+
+=head1
+Creates the data base && works as a driver for the remander of the script
+=cut
 my %database;
 my $database_file = "Simple.dbm";
-
-# make database
 tie %database, 'SDBM_File', $database_file, O_CREAT|O_RDWR, 0644;
-
 # let the user know if the file was created/opened or not
 if (tied %database){
   print "File $database_file now open.\n";
@@ -38,11 +43,9 @@ if (tied %database){
 else{
   die "Sorry unable to open $database_file.\n";
 }
-
 $_ = ""; # ensures that the base var is defined
-
-
-until (/^q/i){ # checks to see if q/Q is at the begining, allowing the user to quit
+until (/^q/i){ 
+# checks to see if q/Q is at the begining, allowing the user to quit
   print "What would you like to do? (o for options): \n";
   # chomp removes trailing newlines from the input
   chomp ($_ = <STDIN>);
@@ -58,11 +61,12 @@ until (/^q/i){ # checks to see if q/Q is at the begining, allowing the user to q
   elsif ($_ =~ /^q/i) {print "Bye bye!\n";}
   else{ print "Sorry, not a recognized option.\n";}
 }
+untie %database; # close up house
 
-# close up house
-untie %database;
 
-# ~~~OPTIONS~~~
+# #############################
+# ########## OPTIONS ##########
+# #############################
 =head1
 Lists the avaiable options
 =cut
@@ -81,71 +85,12 @@ sub optionsDB{
 EOF
 }
 
-=head1
-Reads the specific entry entered by the user, if it exists.
-=cut
-sub readDB{
-  my $keyname = getkey();
-  if (exists $database{$keyname}){
-    print $database{$keyname}, "\n";
-  }
-  else{
-    print "Sorry, this element doesn't exist.\n";
-  }
-}
 
-=head1
-Lists all currently stored entries
-=cut
-sub listDB{
-  my $total = "";
-  foreach (sort keys %database){
-    $total .= "$_:\n";
-    $total .= "$database{$_}\n";
-  }
-  return $total;
-}
-
-=head1
-Writes the user input as an entry to the databse
-=cut
-sub writeDB{
-  my $keyname = getkey();
-  my $keyvalue = getvalue();
-  if (exists $database{$keyvalue}){
-    print "Sorry, this element already exists.\n";
-  }
-  else{
-    $database{$keyname} = $keyvalue;
-  }
-}
-
-=head1
-Deletes the entry the user enters
-=cut
-sub deleteDB{
-  my $keyname = getkey();
-  if (exists $database{$keyname}){
-    print "This will delete the element.\n";
-    delete $database{$keyname} if besure();
-  }
-  else{
-    print "Sorry, this element does not exists.\n";
-  }
-}
-
-=head1
-Makes you cry if you didn't mean to
-=cut
-sub clearDB{
-  print "This will delete the ENTIRE DATA BASE.\n";
-  print "Are you 100000% sure you want to PERMENTLY DESTROY EVERYTHING?\n";
-  undef %database if besure();
-}
+# #############################
+# ############ INPUT ##########
+# #############################
 
 
-
-# ~~~INPUT~~~
 =head1
 Gets the key name entry from the user
 =cut
@@ -184,8 +129,26 @@ sub getFile{
   return $filename;
 }
 
+=head1
+Writes the user input as an entry to the databse
+=cut
+sub writeDB{
+  my $keyname = getkey();
+  my $keyvalue = getvalue();
+  if (exists $database{$keyvalue}){
+    print "Sorry, this element already exists.\n";
+  }
+  else{
+    $database{$keyname} = $keyvalue;
+  }
+}
 
-#~~~OUTOUT~~~
+
+# #############################
+# ######### OUTPUT ############
+# #############################
+
+
 =head1
 Formates a person object entry before outputting it
 =cut
@@ -200,9 +163,69 @@ sub formate{
   return $total;
 }
 
+=head1
+Reads the specific entry entered by the user, if it exists.
+=cut
+sub readDB{
+  my $keyname = getkey();
+  if (exists $database{$keyname}){
+    print $database{$keyname}, "\n";
+  }
+  else{
+    print "Sorry, this element doesn't exist.\n";
+  }
+}
 
 =head1
-Writes the entire data base to a file. Each value is stored and sperated by commas. The key name should always be taken as the forename+surname.
+Lists all currently stored entries
+=cut
+sub listDB{
+  my $total = "";
+  foreach (sort keys %database){
+    $total .= "$_:\n";
+    $total .= "$database{$_}\n";
+  }
+  return $total;
+}
+
+
+# #############################
+# ######### CLEANUP ###########
+# #############################
+
+
+=head1
+Deletes the entry the user enters
+=cut
+sub deleteDB{
+  my $keyname = getkey();
+  if (exists $database{$keyname}){
+    print "This will delete the element.\n";
+    delete $database{$keyname} if besure();
+  }
+  else{
+    print "Sorry, this element does not exists.\n";
+  }
+}
+
+=head1
+Makes you cry if you didn't mean to
+=cut
+sub clearDB{
+  print "This will delete the ENTIRE DATA BASE.\n";
+  print "Are you 100000% sure you want to PERMENTLY DESTROY EVERYTHING?\n";
+  undef %database if besure();
+}
+
+
+# #############################
+# ####### FILEHANDLING ########
+# #############################
+
+
+=head1
+Writes the entire data base to a file. Each value is stored and sperated by 
+commas. The key name should always be taken as the forename+surname.
 =cut
 sub fileWriteDB{
   print "File name to write to: ";
@@ -273,19 +296,3 @@ sub fileReadDB{
   }
   print "Entries added: $entries\n";
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
