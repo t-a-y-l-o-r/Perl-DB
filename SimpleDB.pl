@@ -98,12 +98,26 @@ sub getkey{
 }
 
 =head1
-Gets the value entry from the user
+Gets the value entry from the user for the Person object
 =cut
 sub getvalue{
-  print "Enter a value name of the element: \n";
-  chomp ($_ = <STDIN>);
-  $_ =~ s/^\s+|\s+$//g;
+  my $temp;
+  print "Enter the first name of the person: \n";
+  chomp ($temp = <STDIN>);
+  $temp =~ s/^\s+|\s+$//g;
+  $_ = "\tforename > " . $temp;
+  print "Enter the last name of the person: \n";
+  chomp ($temp = <STDIN>);
+  $temp =~ s/^\s+|\s+$//g;
+  $_ .= "\n\tsurname > " . $temp;
+  print "Enter the address of the person: \n";
+  chomp ($temp = <STDIN>);
+  $temp =~ s/^\s+|\s+$//g;
+  $_ .= "\n\taddress > " . $temp;
+  print "Enter the occupation of the person: \n";
+  chomp ($temp = <STDIN>);
+  $temp =~ s/^\s+|\s+$//g;
+  $_ .= "\n\toccupation > " . $temp;
   return $_;
 }
 
