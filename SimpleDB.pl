@@ -41,6 +41,10 @@ if (tied %database){
 else{
   die "Sorry unable to open $database_file.\n";
 }
+
+# runs the passed arguments for the server
+runProcess() if checkArgs();
+
 $_ = ""; # ensures that the base var is defined
 until (/^q/i){ 
 # checks to see if q/Q is at the begining, allowing the user to quit
@@ -48,16 +52,7 @@ until (/^q/i){
   # chomp removes trailing newlines from the input
   chomp ($_ = <STDIN>);
   # run subroutine associated with the passed option
-  if ($_ =~ /^o/i) {optionsDB()}
-  elsif ($_ =~ /^r/i) {readDB()}
-  elsif ($_ =~ /^(fr)/i) {fileReadDB()}
-  elsif ($_ =~ /^(fw)/i) {fileWriteDB()}
-  elsif ($_ =~ /^l/i) {print listDB();}
-  elsif ($_ =~ /^w/i) {writeDB()}
-  elsif ($_ =~ /^d/i) {deleteDB()}
-  elsif ($_ =~ /^x/i) {clearDB()}
-  elsif ($_ =~ /^q/i) {print "Bye bye!\n";}
-  else{ print "Sorry, not a recognized option.\n";}
+  runArg($_)
 }
 untie %database; # close up house
 
@@ -98,7 +93,7 @@ sub getkey{
 }
 
 =head1
-Gets the value entry from the user for the Person object
+Gets the value entry from the user for the Person object 
 =cut
 sub getvalue{
   my $temp;
@@ -151,6 +146,51 @@ sub writeDB{
   else{
     $database{$keyname} = $keyvalue;
   }
+}
+
+=head1
+Determines which command to execute bassed on the passed argument
+=cut
+sub runArg{
+  $_ = shift;
+  if ($_ =~ /^o/i) {optionsDB()}
+  elsif ($_ =~ /^r/i) {readDB()}
+  elsif ($_ =~ /^(fr)/i) {fileReadDB()}
+  elsif ($_ =~ /^(fw)/i) {fileWriteDB()}
+  elsif ($_ =~ /^l/i) {print listDB();}
+  elsif ($_ =~ /^w/i) {writeDB()}
+  elsif ($_ =~ /^d/i) {deleteDB()}
+  elsif ($_ =~ /^x/i) {clearDB()}
+  elsif ($_ =~ /^q/i) {print "Bye bye!\n";}
+  else{ print "Sorry, not a recognized option.\n";}
+}
+
+# #############################
+# ##### COMMAND LINE ##########
+# #############################
+=head1
+Checks to see if the script was called wtih any arguments
+=cut
+sub checkArgs{
+  if (scalar @ARGV == 1){
+    $_= $ARGV[0];
+  }
+  elsif (scalar @ARGV < 1){
+    $_ = undef;
+  }
+  else{
+    die "This script can only accept 1 cmdline argument!";
+  }
+  return $_
+}
+
+=head1
+Handles the requests from the server
+=cut
+sub runProcess{
+    $_ = checkArgs();
+    runArg($_);
+    exit 0;
 }
 
 
